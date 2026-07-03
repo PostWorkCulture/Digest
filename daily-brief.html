@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pete's Daily Brief · Thursday 2 July 2026</title>
+<style>
+  :root{
+    --bg:#f5f3ee; --card:#ffffff; --ink:#1c2024; --ink2:#5a626b; --ink3:#8a929b;
+    --accent:#1668d9; --accent2:#0f4fa8; --gold:#1668d9; --line:#e7e3da;
+    --chipbg:#e8effb; --up:#1668d9; --down:#b8770f; --wash:#faf9f6;
+    --shadow:0 1px 2px rgba(28,32,36,.05),0 6px 20px rgba(28,32,36,.06);
+    --r:14px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:860px;margin:0 auto;padding:0 18px 64px}
+
+  /* ---------- MASTHEAD ---------- */
+  .mast{padding:30px 0 18px}
+  .kicker{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:700}
+  h1{font-size:32px;font-weight:800;letter-spacing:-.02em;margin:4px 0 2px}
+  .sub{color:var(--ink2);font-size:15px}
+  .glance{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+  .chip{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:7px 14px;font-size:13px;font-weight:600;box-shadow:var(--shadow);display:flex;gap:7px;align-items:center;white-space:nowrap}
+  .chip .k{color:var(--ink3);font-weight:600}
+  .chip .up{color:var(--up)} .chip .dn{color:var(--down)}
+  .chip .wic{width:18px;height:18px}
+
+  /* ---------- TABS ---------- */
+  .tabs{position:sticky;top:0;z-index:20;background:var(--bg);padding:12px 0 10px;display:flex;gap:6px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+  .tab{border:1px solid var(--line);background:var(--card);color:var(--ink2);font-size:14px;font-weight:700;padding:9px 16px;border-radius:999px;cursor:pointer;transition:all .15s}
+  .tab:hover{border-color:var(--accent);color:var(--accent)}
+  .tab.on{background:var(--accent);border-color:var(--accent);color:#fff}
+  .panel{display:none;padding-top:20px}
+  .panel.on{display:block}
+
+  /* ---------- SECTIONS ---------- */
+  .sec{margin-bottom:26px}
+  .sec-h{display:flex;align-items:baseline;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+  .sec-h h2{font-size:19px;font-weight:800;letter-spacing:-.01em}
+  .sec-h .tag{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:700}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+  .pad{padding:18px 20px}
+
+  /* weather */
+  .wic{width:28px;height:28px;display:inline-block;vertical-align:middle}
+  .wx{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+  .wx-now{display:flex;align-items:center;gap:16px}
+  .wx-now .wic{width:56px;height:56px}
+  .wx-t{font-size:52px;font-weight:800;letter-spacing:-.04em;line-height:1}
+  .wx-t sup{font-size:22px;color:var(--ink2);font-weight:700}
+  .wx-d{font-size:14px;color:var(--ink2);max-width:420px}
+  .wx-d b{color:var(--ink)}
+  .wx-strip{display:flex;gap:8px;overflow-x:auto;padding:14px 20px 16px;border-top:1px solid var(--line);background:var(--wash);-webkit-overflow-scrolling:touch}
+  .wx-day{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 2px 8px;text-align:center;flex:1 0 86px;min-width:86px}
+  .wx-day.today{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+  .wx-day .d{font-size:10px;font-weight:800;color:var(--ink3);text-transform:uppercase;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .wx-day .dt{font-size:10px;color:var(--ink3);font-weight:600}
+  .wx-day .wic{width:30px;height:30px;margin:5px 0 3px}
+  .wx-day .t{font-size:16px;font-weight:800}
+  .wx-day .lo{font-size:11.5px;color:var(--ink3);font-weight:600}
+
+  /* news / event / headline rows */
+  .row{display:flex;gap:14px;padding:15px 20px;border-top:1px solid var(--line);cursor:default}
+  .row:first-child{border-top:none}
+  .row[data-url]{cursor:pointer;transition:background .12s}
+  .row[data-url]:hover{background:var(--wash)}
+  .row .n{flex:0 0 26px;height:26px;border-radius:8px;background:var(--chipbg);color:var(--accent);font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:2px}
+  .row .b h3{font-size:15px;font-weight:700;line-height:1.35}
+  .row .b p{font-size:13.5px;color:var(--ink2);margin-top:3px}
+  .row .b .src{font-size:11.5px;color:var(--ink3);margin-top:5px;font-weight:600}
+  .evm{font-size:12px;color:var(--ink2);margin-top:5px;font-weight:600;line-height:1.6}
+  .evm b{color:var(--ink);font-weight:800}
+  .fam{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2);background:var(--wash);border:1px solid var(--line);border-radius:4px;padding:1px 6px;margin-left:8px;vertical-align:2px}
+
+  /* markets */
+  .mkts{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1px;background:var(--line)}
+  .mkt{background:var(--card);padding:16px 20px}
+  .mkt .k{font-size:12px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.08em}
+  .mkt .v{font-size:22px;font-weight:800;margin-top:3px;letter-spacing:-.01em}
+  .mkt .c{font-size:13px;font-weight:700;margin-top:2px}
+  .mkt .c.up{color:var(--up)} .mkt .c.dn{color:var(--down)}
+  .mkt .note{font-size:12px;color:var(--ink2);margin-top:4px}
+  .mkt-foot{padding:12px 20px;font-size:13px;color:var(--ink2);border-top:1px solid var(--line);background:var(--wash)}
+  .kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);border-top:1px solid var(--line)}
+  .kv div{background:var(--wash);padding:12px 20px}
+  .kv .k{font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.08em}
+  .kv .v{font-size:15px;font-weight:800;margin-top:2px}
+  .prose{padding:16px 20px;font-size:14px;color:var(--ink2)}
+  .prose b{color:var(--ink)}
+  .prose p{margin-bottom:10px}
+  .prose p:last-child{margin-bottom:0}
+  .prose h4{font-size:13px;font-weight:800;color:var(--ink);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 6px}
+  .prose h4:first-child{margin-top:0}
+  .prose a,.row .b a{color:var(--accent);font-weight:700;text-decoration:none}
+  .prose a:hover,.row .b a:hover{text-decoration:underline}
+  .disc{padding:10px 20px;font-size:11.5px;color:var(--ink3);border-top:1px solid var(--line);background:var(--wash)}
+
+  /* ---------- WORLD CUP ---------- */
+  .flg{width:24px;height:17px;border-radius:3px;object-fit:cover;box-shadow:0 0 0 1px rgba(28,32,36,.12);vertical-align:-3px;margin-right:8px}
+  .flg.r{margin-right:0;margin-left:8px}
+  .vs{font-size:11px;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:.05em;margin:0 8px}
+  .ch{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.05em;color:#fff;border-radius:4px;padding:1px 6px;margin-left:8px;vertical-align:1px}
+  .ch.bbc{background:#e2e6ea;color:#3a4148}
+  .ch.itv{background:#1f3f7a}
+  .ch.tbc{background:var(--ink3)}
+  .fx{display:flex;align-items:center;gap:12px;padding:15px 20px;border-top:1px solid var(--line)}
+  .fx:first-child{border-top:none}
+  .fx .teams{flex:1;min-width:0}
+  .fx .t{font-size:15.5px;font-weight:700;line-height:1.5}
+  .fx .score{flex:0 0 auto;text-align:center;min-width:64px}
+  .fx .score .s{font-size:18px;font-weight:800;letter-spacing:.02em}
+  .fx .score .st{font-size:10.5px;font-weight:800;letter-spacing:.1em;color:var(--ink3);text-transform:uppercase;margin-top:1px}
+  .fx .ko{flex:0 0 auto;text-align:right;min-width:86px}
+  .fx .ko .k{font-size:17px;font-weight:800}
+  .fx .ko .k sup{font-size:11px;color:var(--gold)}
+  .fx-g{font-size:12px;color:var(--ink3);margin-top:3px;font-weight:600}
+  .banner{background:linear-gradient(135deg,var(--accent) 0%,var(--accent2) 100%);color:#fff;border-radius:var(--r);padding:18px 22px;margin-bottom:20px;box-shadow:var(--shadow)}
+  .banner .bk{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;opacity:.85}
+  .banner h2{font-size:20px;font-weight:800;margin-top:3px}
+  .banner p{font-size:13.5px;opacity:.92;margin-top:4px}
+
+  /* standings */
+  .grp-h{font-size:14px;font-weight:800;padding:12px 20px;border-bottom:1px solid var(--line);background:var(--wash);letter-spacing:.02em}
+  table.st{width:100%;border-collapse:collapse;font-size:13.5px}
+  table.st th{font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);font-weight:700;text-align:right;padding:8px 8px}
+  table.st th.tm{text-align:left;padding-left:20px}
+  table.st td{padding:8px 8px;text-align:right;border-top:1px solid var(--line);font-weight:600;color:var(--ink2)}
+  table.st td.tm{text-align:left;padding-left:20px;font-weight:700;color:var(--ink);white-space:nowrap}
+  table.st td.tm .flg{width:22px;height:15px}
+  table.st td.pts{font-weight:800;color:var(--ink);padding-right:20px}
+  table.st th.pts{padding-right:20px}
+  table.st tr.q td.tm::after{content:"Q";font-size:9.5px;font-weight:800;color:#fff;background:var(--accent);border-radius:4px;padding:1px 5px;margin-left:8px;vertical-align:1px}
+  table.st tr.out td{color:var(--ink3)}
+  table.st tr.out td.tm{color:var(--ink3);font-weight:600}
+
+  /* Google-style knockout bracket */
+  .bracket{display:flex;gap:20px;overflow-x:auto;padding:6px 2px 18px;-webkit-overflow-scrolling:touch;align-items:flex-start}
+  .brc{flex:0 0 250px}
+  .brc h4{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);margin:0 0 10px 4px}
+  .bkm{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);margin-bottom:10px;overflow:hidden}
+  .bkt{display:flex;align-items:center;gap:8px;padding:9px 12px}
+  .bkt + .bkt{border-top:1px solid var(--line)}
+  .bkt .flg{width:22px;height:15px;margin-right:2px}
+  .bkt .nm{flex:1;font-size:13.5px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .bkt .sc{font-size:14px;font-weight:800;min-width:20px;text-align:right}
+  .bkt.lose .nm,.bkt.lose .sc{color:var(--ink3);font-weight:600}
+  .bkt.win .nm,.bkt.win .sc{color:var(--accent)}
+  .bkt .pen{font-size:10.5px;color:var(--ink3);font-weight:700;margin-left:4px}
+  .bkm-meta{padding:7px 12px;font-size:11px;color:var(--ink3);font-weight:600;background:var(--wash);border-top:1px solid var(--line)}
+  .bkt .tbd{color:var(--ink3);font-weight:600;font-style:italic}
+
+  .foot{margin-top:34px;text-align:center;font-size:12px;color:var(--ink3)}
+  .foot b{color:var(--ink2)}
+
+  @media(max-width:600px){
+    h1{font-size:26px}
+    .bm .when{display:none}
+    .fx .ko{min-width:70px}
+    .fx .t{font-size:14px}
+  }
+</style>
+</head>
+<body>
+
+<!-- Weather icon set (inline SVG symbols) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-sun" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="5" fill="#f2a93b"/>
+    <g stroke="#f2a93b" stroke-width="2" stroke-linecap="round">
+      <line x1="12" y1="1.8" x2="12" y2="4.4"/><line x1="12" y1="19.6" x2="12" y2="22.2"/>
+      <line x1="1.8" y1="12" x2="4.4" y2="12"/><line x1="19.6" y1="12" x2="22.2" y2="12"/>
+      <line x1="4.8" y1="4.8" x2="6.6" y2="6.6"/><line x1="17.4" y1="17.4" x2="19.2" y2="19.2"/>
+      <line x1="4.8" y1="19.2" x2="6.6" y2="17.4"/><line x1="17.4" y1="6.6" x2="19.2" y2="4.8"/>
+    </g>
+  </symbol>
+  <symbol id="i-psun" viewBox="0 0 24 24">
+    <circle cx="9" cy="8.5" r="4" fill="#f2a93b"/>
+    <g stroke="#f2a93b" stroke-width="1.8" stroke-linecap="round">
+      <line x1="9" y1="1.4" x2="9" y2="3.1"/><line x1="1.4" y1="8.5" x2="3.1" y2="8.5"/>
+      <line x1="3.6" y1="3.1" x2="4.8" y2="4.3"/><line x1="14.4" y1="3.1" x2="13.2" y2="4.3"/>
+    </g>
+    <path d="M7.2 19.6a4.1 4.1 0 0 1 .4-8.1 5.2 5.2 0 0 1 9.9 1.4 3.6 3.6 0 0 1-.9 6.7Z" fill="#b9c5d0"/>
+  </symbol>
+  <symbol id="i-storm" viewBox="0 0 24 24">
+    <circle cx="8.5" cy="7.5" r="3.4" fill="#f2a93b"/>
+    <path d="M6.6 16.4a4 4 0 0 1 .5-7.9 5 5 0 0 1 9.6 1.3 3.4 3.4 0 0 1-.8 6.6Z" fill="#9aa8b5"/>
+    <path d="M13 14.5 9.8 19.6h2.4l-1.2 4 4.6-6.2h-2.5l1.4-2.9Z" fill="#f2a93b"/>
+  </symbol>
+</svg>
+
+<div class="wrap">
+
+  <!-- MASTHEAD -->
+  <header class="mast">
+    <h1>Good morning, Pete</h1>
+    <div class="sub">Thursday 2 July 2026</div>
+  </header>
+
+  <!-- TABS -->
+  <nav class="tabs">
+    <button class="tab on" data-tab="brief">Brief</button>
+    <button class="tab" data-tab="markets">Markets</button>
+    <button class="tab" data-tab="ai">AI</button>
+    <button class="tab" data-tab="career">Career</button>
+    <button class="tab" data-tab="education">Education</button>
+    <button class="tab" data-tab="matches">WC Matches</button>
+    <button class="tab" data-tab="bracket">WC Knockout</button>
+  </nav>
+
+  <!-- ================= BRIEF TAB ================= -->
+  <section class="panel on" id="tab-brief">
+
+    <!-- WEATHER -->
+    <div class="sec">
+      <div class="sec-h"><h2>Weather</h2></div>
+      <div class="card">
+        <div class="pad wx">
+          <div class="wx-now">
+            <svg class="wic"><use href="#i-psun"/></svg>
+            <div class="wx-t">25<sup>°C</sup></div>
+            <div class="wx-d"><b>Today: sunny spells, breezy this afternoon.</b> Early patchy rain clears by late morning. A warm spell builds from the weekend, peaking midweek.</div>
+          </div>
+        </div>
+        <div class="wx-strip">
+          <div class="wx-day today"><div class="d">Today</div><div class="dt">Thu 2 Jul</div><svg class="wic"><use href="#i-psun"/></svg><div class="t">25°</div><div class="lo">15°</div></div>
+          <div class="wx-day"><div class="d">Tomorrow</div><div class="dt">Fri 3 Jul</div><svg class="wic"><use href="#i-sun"/></svg><div class="t">26°</div><div class="lo">14°</div></div>
+          <div class="wx-day"><div class="d">Sat</div><div class="dt">4 Jul</div><svg class="wic"><use href="#i-sun"/></svg><div class="t">27°</div><div class="lo">15°</div></div>
+          <div class="wx-day"><div class="d">Sun</div><div class="dt">5 Jul</div><svg class="wic"><use href="#i-sun"/></svg><div class="t">28°</div><div class="lo">16°</div></div>
+          <div class="wx-day"><div class="d">Mon</div><div class="dt">6 Jul</div><svg class="wic"><use href="#i-sun"/></svg><div class="t">29°</div><div class="lo">17°</div></div>
+          <div class="wx-day"><div class="d">Tue</div><div class="dt">7 Jul</div><svg class="wic"><use href="#i-sun"/></svg><div class="t">31°</div><div class="lo">18°</div></div>
+          <div class="wx-day"><div class="d">Wed</div><div class="dt">8 Jul</div><svg class="wic"><use href="#i-storm"/></svg><div class="t">33°</div><div class="lo">19°</div></div>
+          <div class="wx-day"><div class="d">Thu</div><div class="dt">9 Jul</div><svg class="wic"><use href="#i-sun"/></svg><div class="t">31°</div><div class="lo">18°</div></div>
+          <div class="wx-day"><div class="d">Fri</div><div class="dt">10 Jul</div><svg class="wic"><use href="#i-sun"/></svg><div class="t">29°</div><div class="lo">17°</div></div>
+          <div class="wx-day"><div class="d">Sat</div><div class="dt">11 Jul</div><svg class="wic"><use href="#i-psun"/></svg><div class="t">27°</div><div class="lo">16°</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOCAL NEWS -->
+    <div class="sec">
+      <div class="sec-h"><h2>Local News</h2></div>
+      <div class="card">
+        <div class="row" data-url="https://newleatherheadliving.wordpress.com/2026/06/30/community-update-following-series-of-indecent-exposures-in-west-molesey/">
+          <div class="n">1</div>
+          <div class="b">
+            <h3>West Molesey: arrest after indecent exposures at Grovelands Park</h3>
+            <p>A 63-year-old Cobham man was arrested after a man reportedly exposed himself several times in the park on Saturday 27 June. He has been released while enquiries continue; police have issued a community update.</p>
+            <div class="src">East Surrey News · 30 Jun</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://www.moleseyresidentsassociation.org.uk/general-interest/funding-available-for-local-projects-cil-fund/">
+          <div class="n">2</div>
+          <div class="b">
+            <h3>Molesey: CIL funding open for community projects</h3>
+            <p>Money from the Community Infrastructure Levy is available for local projects in East and West Molesey — community groups can bid for improvements to shared spaces and facilities.</p>
+            <div class="src">Molesey Residents Association</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://www.moleseyresidentsassociation.org.uk/general-interest/may-2026-local-election-results/">
+          <div class="n">3</div>
+          <div class="b">
+            <h3>Molesey: your new councillors under East Surrey Council</h3>
+            <p>The MRA has published the full May 2026 election results for the Molesey wards — the councillors who will represent East and West Molesey on the new unitary authority through the transition.</p>
+            <div class="src">Molesey Residents Association</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://www.elmbridge.gov.uk/news">
+          <div class="n">4</div>
+          <div class="b">
+            <h3>Molesey parks in line for share of £4.5m play-area upgrades</h3>
+            <p>Elmbridge is investing £4.5 million in play areas across the borough through 2026, with Molesey's parks among those due improvements — good news for the swings-and-slides crowd.</p>
+            <div class="src">Elmbridge Borough Council</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://www.elmbridge.gov.uk/news">
+          <div class="n">5</div>
+          <div class="b">
+            <h3>New protections for green spaces around Molesey</h3>
+            <p>Public Spaces Protection Orders are being introduced across Elmbridge parks and green spaces — covering the likes of Hurst Park and Molesey Heath — to keep them safe and enjoyable.</p>
+            <div class="src">Elmbridge Borough Council</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://www.elmbridge.gov.uk/news/2026/local-government-reorganisation-updates">
+          <div class="n">6</div>
+          <div class="b">
+            <h3>What the 2027 council switch means for Molesey households</h3>
+            <p>From 2027 East and West Molesey will be served by the new East Surrey Council — bins, planning and council tax all transfer. Joint committees are meeting monthly and FAQs are being published as the transition firms up.</p>
+            <div class="src">Elmbridge Borough Council</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://kingston.nub.news/news/local-news">
+          <div class="n">7</div>
+          <div class="b">
+            <h3>Surbiton: new public artwork unveiled on the high street</h3>
+            <p>Surbiton's high street gained a new piece of public art at a community unveiling over the weekend — the latest step in the town-centre refresh.</p>
+            <div class="src">Kingston Nub News</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://www.kingston.gov.uk/news">
+          <div class="n">8</div>
+          <div class="b">
+            <h3>Kingston: £19k Lottery grant for Steven's Ait biodiversity project</h3>
+            <p>The National Lottery Heritage Fund is backing community-led biodiversity improvements on the small Thames island just downstream of Kingston Bridge.</p>
+            <div class="src">Royal Borough of Kingston</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://www.kingston.gov.uk/news">
+          <div class="n">9</div>
+          <div class="b">
+            <h3>Kingston: final chance to shape the new Local Plan</h3>
+            <p>Residents will soon get their last opportunity to comment on the borough's proposed Local Plan — the blueprint for development for years to come — subject to committee approval this month.</p>
+            <div class="src">Royal Borough of Kingston</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://www.surrey.police.uk/news/surrey/news/">
+          <div class="n">10</div>
+          <div class="b">
+            <h3>Surrey: serial burglars who targeted elderly residents jailed</h3>
+            <p>Surrey Police report that burglars who preyed on elderly and vulnerable victims across the county have been sentenced — a result after a long-running investigation.</p>
+            <div class="src">Surrey Police</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOCAL EVENTS -->
+    <div class="sec">
+      <div class="sec-h"><h2>Local Events</h2></div>
+      <div class="card">
+        <div class="row ev" data-url="http://moleseyregatta.org.uk/">
+          <div class="n">★</div>
+          <div class="b">
+            <h3>Molesey Regatta<span class="fam">All ages</span></h3>
+            <p>Two days of head-to-head rowing on your own stretch of the Thames, finishing between Hurst Park and the ferry — bring a picnic and watch from the bank.</p>
+            <div class="evm"><b>Where:</b> Hurst Park, West Molesey · 0.3 mi / 2 min drive &nbsp;·&nbsp; <b>When:</b> two days later in July — dates being confirmed on the official site &nbsp;·&nbsp; <b>Time:</b> racing runs all day from morning &nbsp;·&nbsp; <b>Ages:</b> all — free to watch</div>
+          </div>
+        </div>
+        <div class="row ev" data-url="https://www.hrp.org.uk/hampton-court-palace/whats-on/">
+          <div class="n">2</div>
+          <div class="b">
+            <h3>Henry VIII's Joust — final weekend<span class="fam">All ages</span></h3>
+            <p>Pageantry, armour and thundering hooves in the palace grounds. This weekend is the last chance this summer — a guaranteed hit from age 4 to teens.</p>
+            <div class="evm"><b>Where:</b> Hampton Court Palace · 1 mi / 4 min drive &nbsp;·&nbsp; <b>When:</b> Sat 4 – Sun 5 Jul &nbsp;·&nbsp; <b>Time:</b> displays through the day; palace open 10am–6pm &nbsp;·&nbsp; <b>Ages:</b> all — included with palace admission</div>
+          </div>
+        </div>
+        <div class="row ev" data-url="https://www.hrp.org.uk/hampton-court-palace/">
+          <div class="n">3</div>
+          <div class="b">
+            <h3>The Magic Garden — battlements, dragons and the secret grotto<span class="fam">Age 4+</span></h3>
+            <p>Hampton Court's adventure playground is perfect for your youngest, while the maze and Great Hall keep the older two entertained.</p>
+            <div class="evm"><b>Where:</b> Hampton Court Palace · 1 mi / 4 min drive &nbsp;·&nbsp; <b>When:</b> open daily &nbsp;·&nbsp; <b>Time:</b> 10am–5:30pm (last entry before close) &nbsp;·&nbsp; <b>Ages:</b> designed for 4–12; teens welcome</div>
+          </div>
+        </div>
+        <div class="row ev" data-url="https://www.royalparks.org.uk/visit/parks/bushy-park">
+          <div class="n">4</div>
+          <div class="b">
+            <h3>Bushy Park — deer, Diana Fountain and 1,100 acres<span class="fam">Free</span></h3>
+            <p>Across the bridge: wild deer, water gardens and endless space to burn energy — glorious in this week's warm spell.</p>
+            <div class="evm"><b>Where:</b> Hampton Court Road · 1.5 mi / 6 min drive &nbsp;·&nbsp; <b>When:</b> open daily, year round &nbsp;·&nbsp; <b>Time:</b> dawn to dusk (pedestrian access 24h most of year) &nbsp;·&nbsp; <b>Ages:</b> all — free entry and parking</div>
+          </div>
+        </div>
+        <div class="row ev" data-url="https://www.hamptonpool.co.uk/">
+          <div class="n">5</div>
+          <div class="b">
+            <h3>Hampton Pool — heated open-air swimming<span class="fam">All ages</span></h3>
+            <p>The heated lido on the edge of Bushy Park is at its best in weather like this. Book ahead for weekend family slots.</p>
+            <div class="evm"><b>Where:</b> High Street, Hampton · 1.8 mi / 7 min drive &nbsp;·&nbsp; <b>When:</b> open daily &nbsp;·&nbsp; <b>Time:</b> early-morning to evening sessions — book online &nbsp;·&nbsp; <b>Ages:</b> all; main + teaching pool</div>
+          </div>
+        </div>
+        <div class="row ev" data-url="https://www.mdsme.co.uk/">
+          <div class="n">6</div>
+          <div class="b">
+            <h3>Thames Ditton Miniature Railway — ride-on steam trains<span class="fam">Age 4 gold</span></h3>
+            <p>One of the area's hidden gems: ride-on miniature steam and diesel trains run by the Malden &amp; District Society of Model Engineers. Your four-year-old will talk about it for weeks.</p>
+            <div class="evm"><b>Where:</b> Willowbank, Claygate Lane, Thames Ditton · 2.5 mi / 9 min drive &nbsp;·&nbsp; <b>When:</b> public open days on selected Sundays — check dates on site &nbsp;·&nbsp; <b>Time:</b> typically afternoons &nbsp;·&nbsp; <b>Ages:</b> perfect for under-10s; small fares</div>
+          </div>
+        </div>
+        <div class="row ev" data-url="https://www.thejockeyclub.co.uk/sandown/events-tickets/coral-eclipse/">
+          <div class="n">7</div>
+          <div class="b">
+            <h3>Coral-Eclipse Day — Sandown Park<span class="fam">U18s free</span></h3>
+            <p>Saturday's £1m Group 1 showpiece pits the top three-year-olds against the older generation across seven races, with a post-racing DJ set.</p>
+            <div class="evm"><b>Where:</b> Sandown Park, Esher · 3.5 mi / 11 min drive &nbsp;·&nbsp; <b>When:</b> Sat 4 Jul &nbsp;·&nbsp; <b>Time:</b> gates late morning; the Coral-Eclipse runs 3:35pm &nbsp;·&nbsp; <b>Ages:</b> all — under-18s free with a paying adult</div>
+          </div>
+        </div>
+        <div class="row ev" data-url="https://www.chessington.com/">
+          <div class="n">8</div>
+          <div class="b">
+            <h3>Chessington World of Adventures<span class="fam">4, 12 &amp; 13</span></h3>
+            <p>The rare day out that works for all three: big coasters for the teenagers, the zoo and gentler rides for the four-year-old.</p>
+            <div class="evm"><b>Where:</b> Leatherhead Road, Chessington · 6 mi / 17 min drive &nbsp;·&nbsp; <b>When:</b> open daily through summer &nbsp;·&nbsp; <b>Time:</b> 10am–6pm (rides from 10am) &nbsp;·&nbsp; <b>Ages:</b> all — book online for cheaper entry</div>
+          </div>
+        </div>
+        <div class="row ev" data-url="https://www.wimbledon.com/">
+          <div class="n">9</div>
+          <div class="b">
+            <h3>The Championships, Wimbledon — week one<span class="fam">Teens</span></h3>
+            <p>Grounds passes via the queue get you onto the outside courts — a brilliant day with the older two. British winners Swan, Fearnley, Fery and Choinski are all through.</p>
+            <div class="evm"><b>Where:</b> AELTC, Church Road SW19 · 9 mi / 30 min drive (park &amp; ride advised) &nbsp;·&nbsp; <b>When:</b> daily until Sun 12 Jul &nbsp;·&nbsp; <b>Time:</b> grounds open 10am; play from 11am &nbsp;·&nbsp; <b>Ages:</b> best for the 12 &amp; 13-year-olds</div>
+          </div>
+        </div>
+        <div class="row ev" data-url="https://www.hrw.co.uk/">
+          <div class="n">10</div>
+          <div class="b">
+            <h3>Henley Royal Regatta — finals weekend</h3>
+            <p>The Thames's grandest rowing week. Molesey Boat Club crews are traditionally in the mix — a classic day out upriver.</p>
+            <div class="evm"><b>Where:</b> Henley-on-Thames · 28 mi / 55 min drive &nbsp;·&nbsp; <b>When:</b> daily until Sun 5 Jul &nbsp;·&nbsp; <b>Time:</b> racing from morning to early evening &nbsp;·&nbsp; <b>Ages:</b> all; riverside picnic spots free</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- UK HEADLINES -->
+    <div class="sec">
+      <div class="sec-h"><h2>UK Headlines</h2></div>
+      <div class="card">
+        <div class="row" data-url="https://www.positive.news/society/good-news-stories-from-week-26-of-2026/">
+          <div class="n">1</div>
+          <div class="b">
+            <h3>Breakthrough pill doubles survival time in advanced pancreatic cancer</h3>
+            <p>Daraxonrasib has been shown to lift average survival from 6.7 to 13.2 months in one of the hardest cancers to treat — a genuine landmark in oncology.</p>
+            <div class="src">Positive News</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://www.positive.news/society/good-news-stories-from-week-26-of-2026/">
+          <div class="n">2</div>
+          <div class="b">
+            <h3>England first in Europe to approve therapy that delays type 1 diabetes</h3>
+            <p>NICE has approved Teplizumab this week, a treatment that can push back the onset of type 1 diabetes by up to three years — buying patients precious time.</p>
+            <div class="src">NICE · Positive News</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://www.positive.news/society/good-news-stories-from-week-26-of-2026/">
+          <div class="n">3</div>
+          <div class="b">
+            <h3>Electric cars outsell new petrol cars in the UK for the first time</h3>
+            <p>516,490 new EVs were sold in the year to May against 504,010 petrol cars — a tipping point reached years ahead of many forecasts.</p>
+            <div class="src">Positive News</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://www.lta.org.uk/fan-zone/wimbledon-championships/news/results-updates/">
+          <div class="n">4</div>
+          <div class="b">
+            <h3>British quartet into Wimbledon's second round</h3>
+            <p>Katie Swan led the way with the first home singles win, joined by Jacob Fearnley, Arthur Fery and Jan Choinski — while defending doubles champions Cash &amp; Glasspool dropped just seven points on serve.</p>
+            <div class="src">LTA · Wimbledon</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://www.espn.com/soccer/story/_/id/49233296/live-updates-us-takes-bosnia-herzegovina-round-32-fifa-world-cup">
+          <div class="n">5</div>
+          <div class="b">
+            <h3>England march into the World Cup last 16</h3>
+            <p>A 2–1 win over DR Congo in Atlanta sets up Sunday's knockout tie against hosts Mexico at the Azteca — full details in the WC Matches tab.</p>
+            <div class="src">ESPN</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://www.positive.news/society/good-news-stories-from-week-26-of-2026/">
+          <div class="n">6</div>
+          <div class="b">
+            <h3>Volunteer blood donations up nearly a fifth in a decade</h3>
+            <p>WHO figures show global donations rose almost 20% in the ten years to 2023, powered by unpaid volunteers — the UK among the strongest contributors.</p>
+            <div class="src">WHO · Positive News</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ================= MARKETS TAB ================= -->
+  <section class="panel" id="tab-markets">
+
+    <div class="sec">
+      <div class="sec-h"><h2>Market Snapshot</h2></div>
+      <div class="card">
+        <div class="mkts">
+          <div class="mkt">
+            <div class="k">GBP / USD</div>
+            <div class="v">1.3279</div>
+            <div class="c">Range 1.3266 – 1.3284</div>
+            <div class="note">Steady against a firm dollar</div>
+          </div>
+          <div class="mkt">
+            <div class="k">FTSE 100</div>
+            <div class="v">10,442.76</div>
+            <div class="c dn">▼ 54.36 (−0.52%)</div>
+            <div class="note">Miners drag; defence stocks firm</div>
+          </div>
+          <div class="mkt">
+            <div class="k">Gold</div>
+            <div class="v c dn" style="font-size:22px">−14% in June</div>
+            <div class="note">Fresh lows on higher-for-longer Fed bets</div>
+          </div>
+          <div class="mkt">
+            <div class="k">BTC / USD</div>
+            <div class="v">$60,123</div>
+            <div class="c up">▲ +2.45% (24h)</div>
+            <div class="note">Day range ~$59.2k – $60.1k</div>
+          </div>
+        </div>
+        <div class="mkt-foot"><b>The bigger picture:</b> the FTSE 100 has now risen for six straight quarters — Q2 added 3% after Q1's 2.5% — its strongest streak since 2022.</div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h"><h2>GBP/USD — What's Moving the Pair</h2></div>
+      <div class="card">
+        <div class="kv">
+          <div><div class="k">Spot</div><div class="v">1.3279</div></div>
+          <div><div class="k">Bank Rate</div><div class="v">3.75%</div></div>
+          <div><div class="k">Fed Funds</div><div class="v">3.50–3.75%</div></div>
+          <div><div class="k">Next BoE</div><div class="v">Thu 30 Jul</div></div>
+          <div><div class="k">Next Fed</div><div class="v">Wed 29 Jul</div></div>
+        </div>
+        <div class="row" data-url="https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2026/june-2026">
+          <div class="n">1</div>
+          <div class="b">
+            <h3>BoE held at 3.75% — but two members voted to hike</h3>
+            <p>June's 7–2 split, with the minority wanting 4%, gives sterling a hawkish undertone. A July rise is seen as unlikely, but a move later this year is live — supportive for the pound.</p>
+            <div class="src">Bank of England · next decision 30 Jul</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://www.fxstreet.com/analysis/gbp-usd-price-annual-forecast-will-2026-be-another-bullish-year-for-pound-sterling-202512191006">
+          <div class="n">2</div>
+          <div class="b">
+            <h3>Hawkish Fed dot plot keeps the dollar firm</h3>
+            <p>The Fed held at 3.50–3.75% in June but the median policymaker now sees year-end rates at 3.8%, and markets price a possible hike by October. Higher-for-longer US rates are the main cap on cable right now.</p>
+            <div class="src">FXStreet · next decision 29 Jul</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://www.fxempire.com/forecasts/article/gbp-usd-forecast-2026-sterling-faces-limits-but-outlook-improves-1568579">
+          <div class="n">3</div>
+          <div class="b">
+            <h3>US jobs report due tomorrow — the week's volatility event</h3>
+            <p>Friday's payrolls data is the near-term trigger: a strong print reinforces the hawkish Fed story (dollar up, cable down); a miss revives cut bets and lifts the pound. Expect a wider range around 1:30pm BST.</p>
+            <div class="src">FXEmpire</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://cambridgecurrencies.com/gbp-usd-forecast/">
+          <div class="n">4</div>
+          <div class="b">
+            <h3>Bank forecasts still lean bullish on cable into year-end</h3>
+            <p>Goldman sees 1.36, Scotiabank 1.37 and Morgan Stanley's bull case 1.47, mostly on expected dollar softening. JPMorgan's 1.28 bear case is the outlier — but it's the view most consistent with today's hawkish-Fed setup.</p>
+            <div class="src">Cambridge Currencies · bank forecasts</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://www.fxempire.com/forecasts/article/gbp-usd-forecast-2026-sterling-faces-limits-but-outlook-improves-1568579">
+          <div class="n">5</div>
+          <div class="b">
+            <h3>Sticky UK services inflation cuts both ways</h3>
+            <p>Persistent services inflation is what keeps the BoE hawkish (sterling-supportive) while simultaneously squeezing UK growth (sterling-negative). Watch the next UK CPI print for which side wins — services below 4% would flip the July narrative.</p>
+            <div class="src">FXEmpire</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://www.fxstreet.com/analysis/gbp-usd-price-annual-forecast-will-2026-be-another-bullish-year-for-pound-sterling-202512191006">
+          <div class="n">6</div>
+          <div class="b">
+            <h3>UK political leadership uncertainty adds a risk premium</h3>
+            <p>Questions over the government's direction are keeping a discount on sterling assets. Any resolution tends to lift cable independently of rates — and any escalation does the reverse, fast.</p>
+            <div class="src">FXStreet</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://www.ig.com/en/news-and-trade-ideas/ftse-100-gbp-usd-drop-further-while-us-natural-gas-futures-remai-260619-260622">
+          <div class="n">7</div>
+          <div class="b">
+            <h3>Broad dollar strength is the ceiling — gold's collapse tells the story</h3>
+            <p>Gold's ~14% June slide reflects the same higher-for-longer dollar bid capping cable. Until USD momentum cracks, rallies toward 1.34 have struggled; a gold base often precedes a dollar top.</p>
+            <div class="src">IG Markets</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://www.bankofengland.co.uk/monetary-policy-summary-and-minutes/2026/june-2026">
+          <div class="n">8</div>
+          <div class="b">
+            <h3>The 29–30 July double-header is the month's pivot</h3>
+            <p>Fed decides Wednesday, BoE Thursday — back-to-back. The July MPC is also expected to weigh the Middle East peace deal's inflation implications. Consecutive meetings compress a month of repricing into 36 hours; position sizing matters more than direction into that window.</p>
+            <div class="src">BoE · Fed calendars</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ================= AI TAB ================= -->
+  <section class="panel" id="tab-ai">
+    <div class="sec">
+      <div class="sec-h"><h2>Top 10 in AI</h2></div>
+      <div class="card">
+        <div class="row" data-url="https://www.axios.com/2026/07/01/anthropic-fable-5-back-online-trump-export-controls-lifted">
+          <div class="n">1</div>
+          <div class="b">
+            <h3>Claude Fable 5 and Mythos 5 are back — US lifts export controls</h3>
+            <p>After a 19-day shutdown ordered on national-security grounds, the Commerce Department reversed course on 30 June and Anthropic began restoring global access to its most capable models on 1 July.</p>
+            <div class="src">Axios · CNBC · 1 Jul</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://innfactory.ai/en/blog/gpt-5-6-fable-5-government-access-restrictions/">
+          <div class="n">2</div>
+          <div class="b">
+            <h3>OpenAI unveils GPT-5.6 — Sol, Terra and Luna</h3>
+            <p>Announced 26 June but launched to only ~20 government-approved partners at Washington's request — the first frontier model released under a US-managed access list. General availability is promised in the coming weeks.</p>
+            <div class="src">innFactory · OpenAI</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://www.axios.com/2026/06/30/trump-anthropic-ai-model-fable-restrictions">
+          <div class="n">3</div>
+          <div class="b">
+            <h3>Frontier AI is now effectively government-gated</h3>
+            <p>Two frontier releases in two weeks were held back by federal action before public access. The administration faces an August deadline to publish standardised security benchmarks for new models — the rules of the road are being written right now.</p>
+            <div class="src">Axios · CIO</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://releasebot.io/updates/anthropic">
+          <div class="n">4</div>
+          <div class="b">
+            <h3>Claude Sonnet 5 launches as Anthropic's new workhorse</h3>
+            <p>Billed as its most agentic model yet, with big gains in reasoning, tool use and coding. Now the default on Free and Pro plans, with introductory pricing of $2/$10 per million tokens until 31 August.</p>
+            <div class="src">Anthropic release notes</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://particula.tech/blog/deepseek-v4-qwen-open-source-ai-disruption">
+          <div class="n">5</div>
+          <div class="b">
+            <h3>DeepSeek V4 Preview: 1M-token context at 1/20th the cost of GPT-5</h3>
+            <p>China's DeepSeek shipped V4 Pro and V4 Flash with open weights, million-token multimodal inference and pricing around $0.14 per million input tokens — the sharpest cost disruption of the year.</p>
+            <div class="src">Particula · DeepSeek</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://www.deeplearning.ai/the-batch/kimi-k2-6-matches-open-qwen3-6-max-anddeepseek-v4-falls-just-behind-top-closed-models">
+          <div class="n">6</div>
+          <div class="b">
+            <h3>China's open-weight surge: Kimi K2.6 and Qwen 3.5 close the gap</h3>
+            <p>Moonshot's 1-trillion-parameter Kimi K2.6 and Alibaba's Apache-licensed Qwen 3.5 now sit just behind the top closed models. Chinese open models have grown from ~1% to ~15% of global usage in a year.</p>
+            <div class="src">The Batch · DeepLearning.AI</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://www.local.gov.uk/our-support/cyber-digital-and-technology/artificial-intelligence-hub/artificial-intelligence-case">
+          <div class="n">7</div>
+          <div class="b">
+            <h3>On your doorstep: Kingston Council's AI pilot cuts admin by 63%</h3>
+            <p>Kingston is trialling Beam's "Magic Notes" in Adult Social Care — a generative-AI tool that drafts case notes with 98% transcription accuracy and a human-in-the-loop, freeing social workers for client care.</p>
+            <div class="src">LGA AI case-study bank</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://mhclgdigital.blog.gov.uk/2026/03/16/introducing-local-ai/">
+          <div class="n">8</div>
+          <div class="b">
+            <h3>Public sector AI goes mainstream: MHCLG's "Local AI" team scales up</h3>
+            <p>The new central team supporting responsible AI across councils, alongside "Minute" — the government's AI meeting scribe now used by 1,000 officials across 22 local authorities.</p>
+            <div class="src">MHCLG Digital · GOV.UK</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://llm-stats.com/ai-news">
+          <div class="n">9</div>
+          <div class="b">
+            <h3>Google ships two new image models</h3>
+            <p>Gemini 3.1 Flash Image and Gemini 3 Pro Image landed on 30 June via AI Studio and the Gemini API — Flash for speed, Pro for quality.</p>
+            <div class="src">Google · 30 Jun</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://blogs.nvidia.com/blog/national-robotics-week-2026/">
+          <div class="n">10</div>
+          <div class="b">
+            <h3>Boston Dynamics wires Gemini into its robots</h3>
+            <p>A new partnership with Google Cloud and DeepMind integrates Gemini Robotics-ER 1.6 into industrial robotics — frontier reasoning heading for the factory floor.</p>
+            <div class="src">NVIDIA blog · Boston Dynamics</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CAREER TAB ================= -->
+  <section class="panel" id="tab-career">
+
+    <div class="sec">
+      <div class="sec-h"><h2>This Week's Signal</h2></div>
+      <div class="card">
+        <div class="prose">
+          <p><b>The gap is your opportunity.</b> 63% of UK civil servants say they know "a little" or "nothing at all" about AI, and only 38% believe their team uses it effectively — yet every public sector organisation must have a digital leader on its executive committee by end of 2026. The people bridging that gap are not coders; they're translators who understand what AI can do and can carry an organisation with them. That's your lane.</p>
+          <p><b>And it's hiring on your doorstep.</b> Kingston Council is actively piloting generative AI (Beam's "Magic Notes" in Adult Social Care, cutting admin time 63%), and MHCLG's new "Local AI" team is funding responsible-AI adoption across councils. Local government is arguably the fastest-growing non-technical AI employer in the country right now.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h"><h2>Live Openings Within an Hour's Drive</h2></div>
+      <div class="card">
+        <div class="row" data-url="https://www.governance.ai/opportunities">
+          <div class="n">1</div>
+          <div class="b">
+            <h3>Winter Fellow, AI Governance &amp; Policy — GovAI</h3>
+            <div class="evm"><b>Salary:</b> £11,000 stipend for the 3 months + weekday lunches &nbsp;·&nbsp; <b>Location:</b> London · ~50 min drive</div>
+            <p>Funded fellowship (18 Jan – 9 Apr 2027) designed to launch careers in AI governance and policy — research, writing and judgement rather than code. Open to all backgrounds; alumni move into government and policy roles.</p>
+            <div class="src"><b>Deadline:</b> Sunday 12 July 2026, 23:59</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://www.civilservicejobs.service.gov.uk/">
+          <div class="n">2</div>
+          <div class="b">
+            <h3>Delivery &amp; Policy roles — Government Digital Service / Incubator for AI (i.AI)</h3>
+            <div class="evm"><b>Salary:</b> typically £42,000–£67,000 by grade (HEO–G7), London-weighted, + Civil Service pension &nbsp;·&nbsp; <b>Location:</b> Whitehall, London · ~50 min drive · hybrid</div>
+            <p>GDS is hiring for the digital centre of government, home of i.AI — roles span delivery, engagement and policy alongside the technical teams. Exactly where an AI-literate non-coder lands well.</p>
+            <div class="src"><b>Deadline:</b> current round closes Sunday 5 July 2026, 23:55 — this weekend</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://www.it-jobs.co.uk/ai-governance-jobs-in-london">
+          <div class="n">3</div>
+          <div class="b">
+            <h3>AI Governance Lead — Chief Data Office</h3>
+            <div class="evm"><b>Salary:</b> typically £70,000–£90,000 for this title in current London listings &nbsp;·&nbsp; <b>Location:</b> London · 45–60 min drive</div>
+            <p>Live listing: establish and embed AI governance frameworks, ensure ethical and compliant use, and enable the organisation to scale adoption responsibly — the exact non-coding profile you're building.</p>
+            <div class="src"><b>Deadline:</b> rolling — apply via the listing; similar roles posted weekly</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://www.london.gov.uk/programmes-strategies/business-and-economy/mayors-priorities-londons-economy-and-business/london-ai-and-jobs-taskforce">
+          <div class="n">4</div>
+          <div class="b">
+            <h3>Programme &amp; Policy roles — London AI &amp; Jobs Taskforce, GLA</h3>
+            <div class="evm"><b>Salary:</b> typically £52,000–£65,000 at GLA programme grades &nbsp;·&nbsp; <b>Location:</b> City Hall, London · ~60 min drive</div>
+            <p>The Mayor's new taskforce on AI's impact on London's workforce is staffing up — secondments and programme roles suit policy-minded AI generalists who can work across government, business and unions.</p>
+            <div class="src"><b>Deadline:</b> none live today — roles appear on the GLA jobs board; check weekly</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://www.surreycc.gov.uk/jobs">
+          <div class="n">5</div>
+          <div class="b">
+            <h3>Digital &amp; Transformation roles — Surrey County Council (reorg wave)</h3>
+            <div class="evm"><b>Salary:</b> typically £45,000–£60,000 for transformation/digital grades &nbsp;·&nbsp; <b>Location:</b> Kingston / Weybridge / Woking offices · 15–30 min drive</div>
+            <p>Surrey's move to two unitary councils by April 2027 is driving digital and transformation hiring — the closest employer on this list. No AI-titled role live today; these appear in waves, so set an alert.</p>
+            <div class="src"><b>Deadline:</b> none live today — alert set-up recommended on surreycc.gov.uk/jobs</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h"><h2>Roles That Fit Non-Coding AI Skills</h2></div>
+      <div class="card">
+        <div class="row" data-url="https://www.civilservicejobs.service.gov.uk/">
+          <div class="n">1</div>
+          <div class="b">
+            <h3>AI Adoption / Change Lead</h3>
+            <p>Runs pilots like Kingston's Magic Notes: choosing use cases, managing rollout, training staff, measuring time saved. Core skills: stakeholder management, evaluation, communication — not code.</p>
+            <div class="src">Search "AI adoption" · Civil Service Jobs &amp; council careers pages</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://www.civilservicejobs.service.gov.uk/">
+          <div class="n">2</div>
+          <div class="b">
+            <h3>AI Governance &amp; Assurance Officer</h3>
+            <p>Every deployment needs someone who knows the government AI Playbook, data-protection impact assessments and human-in-the-loop design. Huge demand, tiny talent pool, no coding required.</p>
+            <div class="src">Search "AI assurance" / "responsible AI"</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://www.jobsgopublic.com/">
+          <div class="n">3</div>
+          <div class="b">
+            <h3>Digital Transformation Manager (AI-flavoured)</h3>
+            <p>The classic council role, now with AI at its centre. Your five years of trading discipline — risk management, decision-making under uncertainty — translates surprisingly well to business cases.</p>
+            <div class="src">Jobsgopublic · local authority listings</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://www.local.gov.uk/our-support/cyber-digital-and-technology/artificial-intelligence-hub">
+          <div class="n">4</div>
+          <div class="b">
+            <h3>AI Capability / Training Lead</h3>
+            <p>With 63% of staff admitting low AI knowledge, councils and departments need people who can teach practical AI use. If you can explain prompting to a social worker, you're employable.</p>
+            <div class="src">LGA AI Hub</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://www.turing.ac.uk/">
+          <div class="n">5</div>
+          <div class="b">
+            <h3>Policy &amp; Fellowship Routes</h3>
+            <p>The Alan Turing Institute is funding AI fellows embedded in government, and MHCLG's Local AI team is growing. Fellowships value domain judgement and writing over engineering.</p>
+            <div class="src">Alan Turing Institute · MHCLG Local AI</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h"><h2>Build &amp; Apply — This Month's Plan</h2></div>
+      <div class="card">
+        <div class="prose">
+          <h4>Learn (free, credible)</h4>
+          <p>Read the <a href="https://www.gov.uk/government/publications/ai-playbook-for-the-uk-government" target="_blank">UK Government AI Playbook</a> — it's the shared language of every public-sector AI interview. Follow it with the <a href="https://www.local.gov.uk/our-support/cyber-digital-and-technology/artificial-intelligence-hub/artificial-intelligence-case" target="_blank">LGA AI case-study bank</a> (learn 5 real council deployments cold, including Kingston's) and the <a href="https://mhclgdigital.blog.gov.uk/2026/03/16/introducing-local-ai/" target="_blank">MHCLG Local AI blog</a>. That trio makes you conversant with how government actually buys and governs AI.</p>
+          <h4>Develop (evidence beats certificates)</h4>
+          <p>Build a small portfolio: one page each on three council problems AI could solve, with the use case, risks, human-in-the-loop design and a measurable outcome. This is exactly the artefact adoption roles produce, and almost no candidate brings one.</p>
+          <h4>Find (where the jobs live)</h4>
+          <p>Set alerts on <a href="https://www.civilservicejobs.service.gov.uk/" target="_blank">Civil Service Jobs</a> ("artificial intelligence", filter to policy/delivery, not engineering), <a href="https://www.jobsgopublic.com/" target="_blank">Jobsgopublic</a> and <a href="https://www.local.gov.uk/jobs" target="_blank">LGA jobs</a> for councils, and watch <a href="https://www.kingston.gov.uk/jobs" target="_blank">Kingston</a> and <a href="https://www.elmbridge.gov.uk/jobs" target="_blank">Elmbridge</a> career pages directly — a council already piloting AI will need adoption support next. The <a href="https://www.turing.ac.uk/" target="_blank">Turing Institute</a> and <a href="https://www.techuk.org/" target="_blank">techUK</a> events double as hiring pipelines.</p>
+          <h4>This week's move</h4>
+          <p>Kingston's Magic Notes pilot is live now. Write a one-page note on what you'd measure to decide its success, and take it to a conversation with their digital team — that's a portfolio piece, a network contact and an interview story in one.</p>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ================= EDUCATION TAB ================= -->
+  <section class="panel" id="tab-education">
+
+    <div class="sec">
+      <div class="sec-h"><h2>The Orchard School — Starting Reception</h2></div>
+      <div class="card">
+        <div class="prose">
+          <p><b>She starts Reception in September — here's the runway.</b> The autumn term begins <b>Wednesday 2 September</b> (staff INSET is Tuesday 1 September). Reception intakes typically start with shorter or staggered days in the first week or two — the exact induction pattern, meet-the-teacher sessions and home-visit/settling arrangements are set out in the two documents below, so read those first and diary the dates they give.</p>
+        </div>
+        <div class="row" data-url="https://www.orchard.surrey.sch.uk/docs/general/welcome_pack_2026_-_2027.pdf">
+          <div class="n">1</div>
+          <div class="b">
+            <h3>Read: the Welcome Pack 2026–27</h3>
+            <p>The school's official pack for new families — routines, the school day, contacts, what she needs on day one. This is the single most important document; the induction and welcome-event dates live here.</p>
+            <div class="src"><a href="https://www.orchard.surrey.sch.uk/docs/general/welcome_pack_2026_-_2027.pdf" target="_blank">Welcome Pack 2026–27 (PDF)</a></div>
+          </div>
+        </div>
+        <div class="row" data-url="https://www.orchard.surrey.sch.uk/docs/general/orchard_starting_reception_leaflet.pdf">
+          <div class="n">2</div>
+          <div class="b">
+            <h3>Read: the Starting Reception leaflet</h3>
+            <p>The Reception-specific guide — settling-in approach, what the first weeks look like in the Early Years classes, and how to prepare her over the summer.</p>
+            <div class="src"><a href="https://www.orchard.surrey.sch.uk/docs/general/orchard_starting_reception_leaflet.pdf" target="_blank">Starting Reception leaflet (PDF)</a></div>
+          </div>
+        </div>
+        <div class="row" data-url="https://www.pta-events.co.uk/orchardpta/index.cfm?event=products">
+          <div class="n">3</div>
+          <div class="b">
+            <h3>Do: order uniform kit &amp; name labels now</h3>
+            <p>Book bags, PE bags and school caps are sold through the <a href="https://www.pta-events.co.uk/orchardpta/index.cfm?event=products" target="_blank">PTA online shop</a> (uniform details on the <a href="https://www.orchard.surrey.sch.uk/School-Uniform/" target="_blank">School Uniform page</a>). For name labels, order via <a href="https://www.stikins.co.uk/name-labels" target="_blank">Stikins</a> and quote fundraising number <b>23325</b> — the school gets up to 30% commission.</p>
+            <div class="src">PTA shop · Stikins ref 23325</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://www.orchard.surrey.sch.uk/School-Lunches/">
+          <div class="n">4</div>
+          <div class="b">
+            <h3>Do: sort lunches, ParentMail and payments</h3>
+            <p>Reception meals are provided by Twelve15 (<a href="https://www.orchard.surrey.sch.uk/docs/general/twelve15_-_reception_school_meals.pdf" target="_blank">Reception meals guide</a>, <a href="https://www.orchard.surrey.sch.uk/docs/General/The_Orchard_School_Lunch_Menus.pdf" target="_blank">sample menus</a>) — infants get universal free school meals, but register anyway. Sign up to <a href="https://pmx.parentmail.co.uk/" target="_blank">ParentMail</a> (all school comms) and <a href="https://www.orchard.surrey.sch.uk/Parents/School-Payments/" target="_blank">School Payments</a> before September.</p>
+            <div class="src">Twelve15 · ParentMail · School Payments</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://www.orchard.surrey.sch.uk/Wrap-Around-Care/">
+          <div class="n">5</div>
+          <div class="b">
+            <h3>Do: book wrap-around care if you need it</h3>
+            <p>Before- and after-school care runs on site and fills up before September — check the <a href="https://www.orchard.surrey.sch.uk/Wrap-Around-Care/" target="_blank">Wrap Around Care page</a> and the <a href="https://www.orchard.surrey.sch.uk/The-School-Day/" target="_blank">School Day timings</a> to plan drop-off and pick-up.</p>
+            <div class="src">Wrap Around Care · The School Day</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://www.orchard.surrey.sch.uk/Calendar/">
+          <div class="n">6</div>
+          <div class="b">
+            <h3>Watch: welcome events, meet-the-teacher &amp; PTA socials</h3>
+            <p>New-parent welcome sessions and meet-the-teacher events are announced via the <a href="https://www.orchard.surrey.sch.uk/Calendar/" target="_blank">Diary Dates calendar</a> and ParentMail (the public news page is currently empty, so don't rely on it). The <a href="https://www.orchard.surrey.sch.uk/Parents/PTA/" target="_blank">PTA</a> traditionally runs new-parent socials early in the autumn term — the fastest way to meet other Reception families.</p>
+            <div class="src">Diary Dates · PTA · ParentMail</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://www.orchard.surrey.sch.uk/Term-Dates/">
+          <div class="n">7</div>
+          <div class="b">
+            <h3>Key dates at a glance</h3>
+            <p>Term starts <b>Wed 2 Sep</b> · half term <b>19–30 Oct</b> · term ends <b>Fri 18 Dec</b>. Also note: current pupils are off tomorrow (INSET Fri 3 Jul) and the summer term ends Wed 22 July. Forms you may need later (leave of absence etc.) are on the <a href="https://www.orchard.surrey.sch.uk/Parents/Useful-Forms/" target="_blank">Useful Forms page</a>.</p>
+            <div class="src">Term Dates 2026/27</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://www.orchard.surrey.sch.uk/">
+          <div class="n">8</div>
+          <div class="b">
+            <h3>School snapshot</h3>
+            <p>241 pupils (Jan 2026), ages 4–7, headed by Mrs Sally Cary; part of The Voice Trust, with the Pine Class specialist resource centre for speech, language and communication. Bridge Road, KT8 9HT — minutes from home. Contact: 020 8979 2945 · admin@orchard.surrey.sch.uk.</p>
+            <div class="src">GOV.UK · school website</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h"><h2>St Lawrence CofE Junior School</h2></div>
+      <div class="card">
+        <div class="row" data-url="https://www.stlawrence-junior.surrey.sch.uk/calendar/?calid=1,2,3,4,5&pid=9&viewid=3">
+          <div class="n">!</div>
+          <div class="b">
+            <h3>School closed tomorrow — INSET day Friday 3 July</h3>
+            <p>Same as The Orchard: closed to pupils tomorrow. Today, Year 3 are away on their Wittering beach trip.</p>
+            <div class="src">School calendar · stlawrence-junior.surrey.sch.uk</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://www.stlawrence-junior.surrey.sch.uk/calendar/?calid=1,2,3,4,5&pid=9&viewid=3">
+          <div class="n">2</div>
+          <div class="b">
+            <h3>Year 6 Show — Monday 6 &amp; Tuesday 7 July</h3>
+            <p>The leavers' production runs across both days, followed by the Year 6 PGL residential departing Wednesday 8 July.</p>
+            <div class="src">School calendar</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://www.stlawrence-junior.surrey.sch.uk/calendar/?calid=1,2,3,4,5&pid=9&viewid=3">
+          <div class="n">3</div>
+          <div class="b">
+            <h3>Open classroom event — Thursday 16 July</h3>
+            <p>Parents invited in to see the children's work before the end of term — one for the calendar.</p>
+            <div class="src">School calendar</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://www.stlawrence-junior.surrey.sch.uk/calendar/?calid=1,2,3,4,5&pid=9&viewid=3">
+          <div class="n">4</div>
+          <div class="b">
+            <h3>End of year — Wednesday 22 July, school closes 1:30pm</h3>
+            <p>The Year 6 leavers' service at St Paul's Church is the same morning. Early pick-up on the last day.</p>
+            <div class="src">School calendar</div>
+          </div>
+        </div>
+        <div class="row" data-url="https://www.stlawrence-junior.surrey.sch.uk/page/?title=Smartphone+Free+Journey&pid=239">
+          <div class="n">5</div>
+          <div class="b">
+            <h3>School initiatives worth knowing</h3>
+            <p>St Lawrence is running a "Smartphone Free Journey" for pupils and a "12 before 12 Guarantee" of experiences before age 12. Ofsted rated the school Good (Nov 2023); ~290 pupils aged 7–11. Weekly "Friday Flyer" updates on the website.</p>
+            <div class="src">School website · Ofsted</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ================= WC MATCHES TAB ================= -->
+  <section class="panel" id="tab-matches">
+
+    <div class="banner">
+      <div class="bk">World Cup 2026 · Knockouts</div>
+      <h2>England are through — Mexico await in the last 16</h2>
+      <p>Harry Kane's double turned the DR Congo tie around in Atlanta, booking a Sunday-night date at the Azteca (kick-off 1:00 AM Monday BST; R16 channels yet to be announced). The USA joined them with a 10-man win, setting up Belgium v USA.</p>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h"><h2>Today's Fixtures · Thursday 2 July (BST)</h2></div>
+      <div class="card" id="wc-matches">
+        <div class="fx">
+          <div class="teams">
+            <div class="t"><img class="flg" src="https://flagcdn.com/w40/es.png" alt="">Spain<span class="vs">Vs</span><img class="flg" src="https://flagcdn.com/w40/at.png" alt="">Austria<span class="ch bbc">BBC One</span></div>
+            <div class="fx-g">Round of 32 · SoFi Stadium, Inglewood</div>
+          </div>
+          <div class="ko"><div class="k">8:00 PM</div></div>
+        </div>
+        <div class="fx">
+          <div class="teams">
+            <div class="t"><img class="flg" src="https://flagcdn.com/w40/pt.png" alt="">Portugal<span class="vs">Vs</span><img class="flg" src="https://flagcdn.com/w40/hr.png" alt="">Croatia<span class="ch bbc">BBC One</span></div>
+            <div class="fx-g">Round of 32 · BMO Field, Toronto · *Fri 3 Jul BST</div>
+          </div>
+          <div class="ko"><div class="k">12:00 AM<sup>*</sup></div></div>
+        </div>
+        <div class="fx">
+          <div class="teams">
+            <div class="t"><img class="flg" src="https://flagcdn.com/w40/ch.png" alt="">Switzerland<span class="vs">Vs</span><img class="flg" src="https://flagcdn.com/w40/dz.png" alt="">Algeria<span class="ch bbc">BBC One</span></div>
+            <div class="fx-g">Round of 32 · BC Place, Vancouver · *Fri 3 Jul BST</div>
+          </div>
+          <div class="ko"><div class="k">4:00 AM<sup>*</sup></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h"><h2>Yesterday's Results · Wednesday 1 July</h2></div>
+      <div class="card">
+        <div class="fx">
+          <div class="teams">
+            <div class="t"><img class="flg" src="https://flagcdn.com/w40/gb-eng.png" alt="">England<span class="vs">Vs</span><img class="flg" src="https://flagcdn.com/w40/cd.png" alt="">DR Congo</div>
+            <div class="fx-g">Round of 32 · 2–1 · Atlanta · Scorers: Kane 74' &amp; late winner — Cipenga 7' (Sky Sports)</div>
+          </div>
+          <div class="score"><div class="s">2–1</div><div class="st">FT</div></div>
+        </div>
+        <div class="fx">
+          <div class="teams">
+            <div class="t"><img class="flg" src="https://flagcdn.com/w40/be.png" alt="">Belgium<span class="vs">Vs</span><img class="flg" src="https://flagcdn.com/w40/sn.png" alt="">Senegal</div>
+            <div class="fx-g">Round of 32 · 3–2 aet · Seattle · Scorers: Lukaku 86', Tielemans 89' &amp; pen (aet) — Diarra 26', Sarr (Sky Sports)</div>
+          </div>
+          <div class="score"><div class="s">3–2</div><div class="st">AET</div></div>
+        </div>
+        <div class="fx">
+          <div class="teams">
+            <div class="t"><img class="flg" src="https://flagcdn.com/w40/us.png" alt="">USA<span class="vs">Vs</span><img class="flg" src="https://flagcdn.com/w40/ba.png" alt="">Bosnia &amp; Herzegovina</div>
+            <div class="fx-g">Round of 32 · 2–0 · Santa Clara · Scorers: Balogun 45' (later sent off), Tillman 82' free-kick</div>
+          </div>
+          <div class="score"><div class="s">2–0</div><div class="st">FT</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h"><h2>Tomorrow · Friday 3 July (BST)</h2></div>
+      <div class="card">
+        <div class="fx">
+          <div class="teams">
+            <div class="t"><img class="flg" src="https://flagcdn.com/w40/au.png" alt="">Australia<span class="vs">Vs</span><img class="flg" src="https://flagcdn.com/w40/eg.png" alt="">Egypt<span class="ch bbc">BBC One</span></div>
+            <div class="fx-g">Round of 32 · AT&amp;T Stadium, Arlington</div>
+          </div>
+          <div class="ko"><div class="k">7:00 PM</div></div>
+        </div>
+        <div class="fx">
+          <div class="teams">
+            <div class="t"><img class="flg" src="https://flagcdn.com/w40/ar.png" alt="">Argentina<span class="vs">Vs</span><img class="flg" src="https://flagcdn.com/w40/cv.png" alt="">Cape Verde<span class="ch itv">ITV1</span></div>
+            <div class="fx-g">Round of 32 · Hard Rock Stadium, Miami</div>
+          </div>
+          <div class="ko"><div class="k">11:00 PM</div></div>
+        </div>
+        <div class="fx">
+          <div class="teams">
+            <div class="t"><img class="flg" src="https://flagcdn.com/w40/co.png" alt="">Colombia<span class="vs">Vs</span><img class="flg" src="https://flagcdn.com/w40/gh.png" alt="">Ghana<span class="ch itv">ITV1</span></div>
+            <div class="fx-g">Round of 32 · Arrowhead Stadium, Kansas City · *Sat 4 Jul BST</div>
+          </div>
+          <div class="ko"><div class="k">2:30 AM<sup>*</sup></div></div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ================= WC KNOCKOUT TAB ================= -->
+  <section class="panel" id="tab-bracket">
+    <div class="sec" id="wc-wallchart">
+      <div class="sec-h"><h2>Road to the Final</h2></div>
+
+      <div class="bracket">
+
+        <div class="brc">
+          <h4>Round of 32</h4>
+          <div class="bkm"><div class="bkt lose"><img class="flg" src="https://flagcdn.com/w40/za.png" alt=""><span class="nm">South Africa</span><span class="sc">0</span></div><div class="bkt win"><img class="flg" src="https://flagcdn.com/w40/ca.png" alt=""><span class="nm">Canada</span><span class="sc">1</span></div><div class="bkm-meta">FT · Sun 28 Jun · Inglewood</div></div>
+          <div class="bkm"><div class="bkt win"><img class="flg" src="https://flagcdn.com/w40/br.png" alt=""><span class="nm">Brazil</span><span class="sc">2</span></div><div class="bkt lose"><img class="flg" src="https://flagcdn.com/w40/jp.png" alt=""><span class="nm">Japan</span><span class="sc">1</span></div><div class="bkm-meta">FT · Mon 29 Jun · Houston</div></div>
+          <div class="bkm"><div class="bkt lose"><img class="flg" src="https://flagcdn.com/w40/de.png" alt=""><span class="nm">Germany</span><span class="sc">1<span class="pen">(3)</span></span></div><div class="bkt win"><img class="flg" src="https://flagcdn.com/w40/py.png" alt=""><span class="nm">Paraguay</span><span class="sc">1<span class="pen">(4)</span></span></div><div class="bkm-meta">Pens · Mon 29 Jun · Foxborough</div></div>
+          <div class="bkm"><div class="bkt lose"><img class="flg" src="https://flagcdn.com/w40/nl.png" alt=""><span class="nm">Netherlands</span><span class="sc">1<span class="pen">(2)</span></span></div><div class="bkt win"><img class="flg" src="https://flagcdn.com/w40/ma.png" alt=""><span class="nm">Morocco</span><span class="sc">1<span class="pen">(3)</span></span></div><div class="bkm-meta">Pens · Mon 29 Jun · Monterrey</div></div>
+          <div class="bkm"><div class="bkt lose"><img class="flg" src="https://flagcdn.com/w40/ci.png" alt=""><span class="nm">Ivory Coast</span><span class="sc">1</span></div><div class="bkt win"><img class="flg" src="https://flagcdn.com/w40/no.png" alt=""><span class="nm">Norway</span><span class="sc">2</span></div><div class="bkm-meta">FT · Tue 30 Jun · Arlington · Haaland 86'</div></div>
+          <div class="bkm"><div class="bkt win"><img class="flg" src="https://flagcdn.com/w40/fr.png" alt=""><span class="nm">France</span><span class="sc">3</span></div><div class="bkt lose"><img class="flg" src="https://flagcdn.com/w40/se.png" alt=""><span class="nm">Sweden</span><span class="sc">0</span></div><div class="bkm-meta">FT · Tue 30 Jun · E. Rutherford · Mbappé ×2, Barcola</div></div>
+          <div class="bkm"><div class="bkt win"><img class="flg" src="https://flagcdn.com/w40/mx.png" alt=""><span class="nm">Mexico</span><span class="sc">2</span></div><div class="bkt lose"><img class="flg" src="https://flagcdn.com/w40/ec.png" alt=""><span class="nm">Ecuador</span><span class="sc">0</span></div><div class="bkm-meta">FT · Tue 30 Jun · Mexico City · Quiñones, Jiménez</div></div>
+          <div class="bkm"><div class="bkt win"><img class="flg" src="https://flagcdn.com/w40/gb-eng.png" alt=""><span class="nm">England</span><span class="sc">2</span></div><div class="bkt lose"><img class="flg" src="https://flagcdn.com/w40/cd.png" alt=""><span class="nm">DR Congo</span><span class="sc">1</span></div><div class="bkm-meta">FT · Wed 1 Jul · Atlanta · Kane ×2; Cipenga 7'</div></div>
+          <div class="bkm"><div class="bkt win"><img class="flg" src="https://flagcdn.com/w40/be.png" alt=""><span class="nm">Belgium</span><span class="sc">3</span></div><div class="bkt lose"><img class="flg" src="https://flagcdn.com/w40/sn.png" alt=""><span class="nm">Senegal</span><span class="sc">2</span></div><div class="bkm-meta">AET · Wed 1 Jul · Seattle · Lukaku, Tielemans ×2</div></div>
+          <div class="bkm"><div class="bkt win"><img class="flg" src="https://flagcdn.com/w40/us.png" alt=""><span class="nm">USA</span><span class="sc">2</span></div><div class="bkt lose"><img class="flg" src="https://flagcdn.com/w40/ba.png" alt=""><span class="nm">Bosnia &amp; Herz.</span><span class="sc">0</span></div><div class="bkm-meta">FT · Wed 1 Jul · Santa Clara · Balogun, Tillman</div></div>
+          <div class="bkm"><div class="bkt"><img class="flg" src="https://flagcdn.com/w40/es.png" alt=""><span class="nm">Spain</span><span class="sc">–</span></div><div class="bkt"><img class="flg" src="https://flagcdn.com/w40/at.png" alt=""><span class="nm">Austria</span><span class="sc">–</span></div><div class="bkm-meta">Today 8:00 PM · Inglewood · BBC One</div></div>
+          <div class="bkm"><div class="bkt"><img class="flg" src="https://flagcdn.com/w40/pt.png" alt=""><span class="nm">Portugal</span><span class="sc">–</span></div><div class="bkt"><img class="flg" src="https://flagcdn.com/w40/hr.png" alt=""><span class="nm">Croatia</span><span class="sc">–</span></div><div class="bkm-meta">Tonight 12:00 AM* · Toronto · BBC One</div></div>
+          <div class="bkm"><div class="bkt"><img class="flg" src="https://flagcdn.com/w40/ch.png" alt=""><span class="nm">Switzerland</span><span class="sc">–</span></div><div class="bkt"><img class="flg" src="https://flagcdn.com/w40/dz.png" alt=""><span class="nm">Algeria</span><span class="sc">–</span></div><div class="bkm-meta">Tonight 4:00 AM* · Vancouver · BBC One</div></div>
+          <div class="bkm"><div class="bkt"><img class="flg" src="https://flagcdn.com/w40/au.png" alt=""><span class="nm">Australia</span><span class="sc">–</span></div><div class="bkt"><img class="flg" src="https://flagcdn.com/w40/eg.png" alt=""><span class="nm">Egypt</span><span class="sc">–</span></div><div class="bkm-meta">Fri 3 Jul 7:00 PM · Arlington · BBC One</div></div>
+          <div class="bkm"><div class="bkt"><img class="flg" src="https://flagcdn.com/w40/ar.png" alt=""><span class="nm">Argentina</span><span class="sc">–</span></div><div class="bkt"><img class="flg" src="https://flagcdn.com/w40/cv.png" alt=""><span class="nm">Cape Verde</span><span class="sc">–</span></div><div class="bkm-meta">Fri 3 Jul 11:00 PM · Miami · ITV1</div></div>
+          <div class="bkm"><div class="bkt"><img class="flg" src="https://flagcdn.com/w40/co.png" alt=""><span class="nm">Colombia</span><span class="sc">–</span></div><div class="bkt"><img class="flg" src="https://flagcdn.com/w40/gh.png" alt=""><span class="nm">Ghana</span><span class="sc">–</span></div><div class="bkm-meta">Sat 4 Jul 2:30 AM* · Kansas City · ITV1</div></div>
+        </div>
+
+        <div class="brc">
+          <h4>Round of 16</h4>
+          <div class="bkm"><div class="bkt"><img class="flg" src="https://flagcdn.com/w40/ca.png" alt=""><span class="nm">Canada</span><span class="sc">–</span></div><div class="bkt"><img class="flg" src="https://flagcdn.com/w40/ma.png" alt=""><span class="nm">Morocco</span><span class="sc">–</span></div><div class="bkm-meta">Sat 4 Jul 6:00 PM · Houston</div></div>
+          <div class="bkm"><div class="bkt"><img class="flg" src="https://flagcdn.com/w40/py.png" alt=""><span class="nm">Paraguay</span><span class="sc">–</span></div><div class="bkt"><img class="flg" src="https://flagcdn.com/w40/fr.png" alt=""><span class="nm">France</span><span class="sc">–</span></div><div class="bkm-meta">Sat 4 Jul 10:00 PM · Philadelphia</div></div>
+          <div class="bkm"><div class="bkt"><img class="flg" src="https://flagcdn.com/w40/br.png" alt=""><span class="nm">Brazil</span><span class="sc">–</span></div><div class="bkt"><img class="flg" src="https://flagcdn.com/w40/no.png" alt=""><span class="nm">Norway</span><span class="sc">–</span></div><div class="bkm-meta">Sun 5 Jul 9:00 PM · E. Rutherford</div></div>
+          <div class="bkm"><div class="bkt"><img class="flg" src="https://flagcdn.com/w40/mx.png" alt=""><span class="nm">Mexico</span><span class="sc">–</span></div><div class="bkt"><img class="flg" src="https://flagcdn.com/w40/gb-eng.png" alt=""><span class="nm">England</span><span class="sc">–</span></div><div class="bkm-meta">Sun 5 Jul 1:00 AM* Mon · Mexico City</div></div>
+          <div class="bkm"><div class="bkt"><span class="nm tbd">Spain / Austria</span><span class="sc">–</span></div><div class="bkt"><span class="nm tbd">Portugal / Croatia</span><span class="sc">–</span></div><div class="bkm-meta">Mon 6 Jul 8:00 PM · Arlington</div></div>
+          <div class="bkm"><div class="bkt"><img class="flg" src="https://flagcdn.com/w40/be.png" alt=""><span class="nm">Belgium</span><span class="sc">–</span></div><div class="bkt"><img class="flg" src="https://flagcdn.com/w40/us.png" alt=""><span class="nm">USA</span><span class="sc">–</span></div><div class="bkm-meta">Mon 6 Jul 1:00 AM* Tue · Seattle</div></div>
+          <div class="bkm"><div class="bkt"><span class="nm tbd">Australia / Egypt</span><span class="sc">–</span></div><div class="bkt"><span class="nm tbd">Argentina / C. Verde</span><span class="sc">–</span></div><div class="bkm-meta">Tue 7 Jul 5:00 PM · Atlanta</div></div>
+          <div class="bkm"><div class="bkt"><span class="nm tbd">Switz. / Algeria</span><span class="sc">–</span></div><div class="bkt"><span class="nm tbd">Colombia / Ghana</span><span class="sc">–</span></div><div class="bkm-meta">Tue 7 Jul 9:00 PM · Vancouver</div></div>
+        </div>
+
+        <div class="brc">
+          <h4>Quarter-finals</h4>
+          <div class="bkm"><div class="bkt"><span class="nm tbd">Winner R16-1</span><span class="sc">–</span></div><div class="bkt"><span class="nm tbd">Winner R16-2</span><span class="sc">–</span></div><div class="bkm-meta">Thu 9 Jul 9:00 PM · Foxborough</div></div>
+          <div class="bkm"><div class="bkt"><span class="nm tbd">Winner R16-3</span><span class="sc">–</span></div><div class="bkt"><span class="nm tbd">Winner R16-4</span><span class="sc">–</span></div><div class="bkm-meta">Fri 10 Jul 8:00 PM · Inglewood</div></div>
+          <div class="bkm"><div class="bkt"><span class="nm tbd">Winner R16-5</span><span class="sc">–</span></div><div class="bkt"><span class="nm tbd">Winner R16-6</span><span class="sc">–</span></div><div class="bkm-meta">Sat 11 Jul 10:00 PM · Miami</div></div>
+          <div class="bkm"><div class="bkt"><span class="nm tbd">Winner R16-7</span><span class="sc">–</span></div><div class="bkt"><span class="nm tbd">Winner R16-8</span><span class="sc">–</span></div><div class="bkm-meta">Sun 12 Jul 2:00 AM* · Kansas City</div></div>
+        </div>
+
+        <div class="brc">
+          <h4>Semi-finals</h4>
+          <div class="bkm"><div class="bkt"><span class="nm tbd">Winner QF-1</span><span class="sc">–</span></div><div class="bkt"><span class="nm tbd">Winner QF-2</span><span class="sc">–</span></div><div class="bkm-meta">Tue 14 Jul 8:00 PM · Arlington</div></div>
+          <div class="bkm"><div class="bkt"><span class="nm tbd">Winner QF-3</span><span class="sc">–</span></div><div class="bkt"><span class="nm tbd">Winner QF-4</span><span class="sc">–</span></div><div class="bkm-meta">Wed 15 Jul 8:00 PM · Atlanta</div></div>
+        </div>
+
+        <div class="brc">
+          <h4>Final</h4>
+          <div class="bkm"><div class="bkt"><span class="nm tbd">Winner SF-1</span><span class="sc">–</span></div><div class="bkt"><span class="nm tbd">Winner SF-2</span><span class="sc">–</span></div><div class="bkm-meta">Sun 19 Jul 8:00 PM · MetLife Stadium</div></div>
+          <div class="bkm"><div class="bkt"><span class="nm tbd">Third-place match</span><span class="sc"></span></div><div class="bkm-meta">Sat 18 Jul 10:00 PM · Miami</div></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    Compiled Thursday 2 July 2026 · Weather via Met Office · Scores &amp; results via Sky Sports Football &amp; BBC Sport · TV channels via BBC/ITV listings · Markets via Trading Economics, BoE &amp; Investing.com<br>
+    <b>Tap any news or event card to open the source.</b> All kick-offs BST; * = after midnight, listed under the day the match kicks off in the US. Every World Cup game is free-to-air on BBC or ITV.
+  </footer>
+
+</div>
+
+<script>
+// Event delegation only — no inline onclick (artifact renderer strips inline handlers).
+document.addEventListener('click', function(e){
+  var tab = e.target.closest('[data-tab]');
+  if (tab){
+    var name = tab.getAttribute('data-tab');
+    document.querySelectorAll('.tab').forEach(function(b){ b.classList.toggle('on', b === tab); });
+    document.querySelectorAll('.panel').forEach(function(p){ p.classList.toggle('on', p.id === 'tab-' + name); });
+    return;
+  }
+  var card = e.target.closest('[data-url]');
+  if (card){ window.open(card.getAttribute('data-url'), '_blank'); }
+});
+</script>
+</body>
+</html>
